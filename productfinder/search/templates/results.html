@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id='results-title'>
+        <h2>Results of your search</h2>
+    </div>
+
+    <table class="table table-striped">
+        {% if search_results %}
+            {% for result in search_results %}
+                <tr>
+                    <td><img src="{{ result.productMainImage }}" class="img-rounded" width="100"></td>
+                    <td><strong>{{ result.title|safe }}</strong></td>
+                    <td>{{ result.price.listPriceText|safe }}</td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <div>
+                <h3>Sorry, the product you are looking for is not available.</h3>
+            </div>
+        {% endif %}
+    </table>
+{% endblock %}
