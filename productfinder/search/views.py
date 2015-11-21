@@ -7,12 +7,18 @@ from .client import get_products
 class SearchIndexView(TemplateView):
     template_name = "search.html"
 
-    def post(self, request, *args, **kwargs):
-        # import ipdb; ipdb.set_trace()
-        search_terms = request.POST.get('search-terms', None)
+    def get(self, request, *args, **kwargs):
+        keywords = request.GET.get('keywords', None)
 
-        if search_terms:
-            search_terms = search_terms.split(' ')
-            results = get_products(search_terms)
+        if keywords:
+            keywords = keywords.split(' ')
+
+            try:
+                results = get_products(keywords)
+            except Exception as e:
+                return render_to_response('error.html')
+
             context = {'search_results': results}
             return render_to_response('results.html', context=context)
+        else:
+            return render_to_response('search.html')
