@@ -126,5 +126,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 API_ROOT_URL = get_env_variable("PRODUCTFINDER_API_ROOT_URL")
 API_TOKEN = get_env_variable("PRODUCTFINDER_API_TOKEN")
