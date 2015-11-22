@@ -1,6 +1,7 @@
 from mock import Mock, patch
 from django.test import TestCase
 from django.core.urlresolvers import reverse
+import views
 from .client import get_products
 
 
@@ -108,3 +109,17 @@ class SearchViewTest(TestCase):
                 reverse('search-index-view'), {'keywords': 'red boots'})
 
             self.assertTemplateUsed(response, 'results.html')
+
+    @patch.object(views, 'get_products')
+    def test_search_view_return_none_products(self, get_products):
+        get_products.return_value = None
+
+        with self.settings(
+                API_ROOT_URL='https://dev.api.io/search?=',
+                API_TOKEN='abc123'):
+
+            products = get_products(['red', 'boots'])
+            response = self.client.get(
+                reverse('search-index-view'), {'keywords': 'red boots'})
+
+            self.assertTemplateUsed(response, 'error.html')
