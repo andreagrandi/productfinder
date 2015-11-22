@@ -1,5 +1,6 @@
 from mock import Mock, patch
 from django.test import TestCase
+from django.core.urlresolvers import reverse
 from .client import get_products
 
 
@@ -8,7 +9,26 @@ class ClientTest(TestCase):
     def test_client_results_ok(self, requests_get):
         mocked_response = Mock()
         mocked_response.status_code = 200
-        mocked_response.json.return_value = {
+        mocked_response.json.return_value = {u'search': {
+            u'results': []}}
+
+        with self.settings(
+                API_ROOT_URL='https://dev.api.io/search?=',
+                API_TOKEN='abc123'):
+
+            requests_get.return_value = mocked_response
+            products = get_products(['red', 'boots'])
+            requests_get.assert_called_with(
+                'https://dev.api.io/search?=red+boots',
+                headers={'Authorization': 'MSAuth apikey=abc123'})
+
+
+class SearchViewTest(TestCase):
+    @patch('requests.get')
+    def test_search_view_ok(self, requests_get):
+        mocked_response = Mock()
+        mocked_response.status_code = 200
+        mocked_response.json.return_value = {u'search': {
             u'results': [
                 {
                     u'averageRating': 5,
@@ -76,14 +96,15 @@ class ClientTest(TestCase):
                     u'productId': u'P22321434',
                     u'productMainImage': u'xxx',
                     u'title': u'Chain Trim Ankle Boots with Insolia Flex'}]
-            }
+            }}
 
         with self.settings(
                 API_ROOT_URL='https://dev.api.io/search?=',
                 API_TOKEN='abc123'):
 
             requests_get.return_value = mocked_response
-            response = get_products(['red', 'boots'])
-            requests_get.assert_called_with(
-                'https://dev.api.io/search?=red+boots',
-                headers={'Authorization': 'MSAuth apikey=abc123'})
+            products = get_products(['red', 'boots'])
+            response = self.client.get(
+                reverse('search-index-view'), {'keywords': 'red boots'})
+
+            self.assertTemplateUsed(response, 'results.html')
