@@ -13,4 +13,6 @@ from whitenoise.django import DjangoWhiteNoise
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "productfinder.settings")
 application = get_wsgi_application()
-application = DjangoWhiteNoise(application)
+
+if os.environ.get('PRODUCTFINDER_USE_WHITENOISE'):
+    application = DjangoWhiteNoise(application)
