@@ -23,6 +23,22 @@ class ClientTest(TestCase):
                 'https://dev.api.io/search?=red+boots',
                 headers={'Authorization': 'MSAuth apikey=abc123'})
 
+    @patch('requests.get')
+    def test_client_results_error(self, requests_get):
+        mocked_response = Mock()
+        mocked_response.status_code = 403
+
+        with self.settings(
+                API_ROOT_URL='https://dev.api.io/search?=',
+                API_TOKEN='abc123'):
+
+            requests_get.return_value = mocked_response
+            products = get_products(['red', 'boots'])
+            requests_get.assert_called_with(
+                'https://dev.api.io/search?=red+boots',
+                headers={'Authorization': 'MSAuth apikey=abc123'})
+            self.assertIsNone(products)
+
 
 class SearchViewTest(TestCase):
     @patch('requests.get')
