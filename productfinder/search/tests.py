@@ -143,7 +143,6 @@ class SearchViewTest(TestCase):
                 API_ROOT_URL='https://dev.api.io/search?=',
                 API_TOKEN='abc123'):
 
-            products = get_products(['red', 'boots'])
             response = self.client.get(
                 reverse('search-index-view'), {'keywords': 'red boots'})
 
@@ -151,3 +150,16 @@ class SearchViewTest(TestCase):
             self.assertContains(
                 response,
                 "Sorry, the product you are looking for is not available.")
+
+    @patch.object(views, 'get_products')
+    def test_search_view_return_error(self, get_products):
+        e = Exception('An error occurred')
+        get_products.side_effect = e
+
+        with self.settings(
+                API_ROOT_URL='https://dev.api.io/search?=',
+                API_TOKEN='abc123'):
+
+            response = self.client.get(
+                reverse('search-index-view'), {'keywords': 'red boots'})
+            self.assertTemplateUsed(response, 'error.html')
