@@ -163,3 +163,13 @@ class SearchViewTest(TestCase):
             response = self.client.get(
                 reverse('search-index-view'), {'keywords': 'red boots'})
             self.assertTemplateUsed(response, 'error.html')
+
+    def test_search_view_called_no_params_return_index(self):
+        with self.settings(
+                API_ROOT_URL='https://dev.api.io/search?=',
+                API_TOKEN='abc123'):
+
+            response = self.client.get(reverse('search-index-view'))
+
+            self.assertTemplateUsed(response, 'search.html')
+            self.assertContains(response, "Search our catalog")
