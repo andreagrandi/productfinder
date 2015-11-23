@@ -122,4 +122,7 @@ class SearchViewTest(TestCase):
             response = self.client.get(
                 reverse('search-index-view'), {'keywords': 'red boots'})
 
-            self.assertTemplateUsed(response, 'error.html')
+            self.assertTemplateUsed(response, 'results.html')
+            self.assertContains(
+                response,
+                "Sorry, the product you are looking for is not available.")

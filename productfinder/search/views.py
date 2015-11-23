@@ -18,9 +18,6 @@ class SearchIndexView(TemplateView):
             except Exception as e:
                 return render_to_response('error.html')
 
-            if results is None:
-                return render_to_response('error.html')
-
             context = {'search_results': results}
             return render_to_response('results.html', context=context)
         else:
