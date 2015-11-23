@@ -109,6 +109,15 @@ class SearchViewTest(TestCase):
                 reverse('search-index-view'), {'keywords': 'red boots'})
 
             self.assertTemplateUsed(response, 'results.html')
+            self.assertContains(
+                response,
+                "Chain Trim Ankle Boots with Insolia Flex")
+            self.assertContains(
+                response,
+                "Leather Platform Ankle Boots")
+            self.assertContains(
+                response,
+                "Football Boots Cake - Red")
 
     @patch.object(views, 'get_products')
     def test_search_view_return_none_products(self, get_products):
