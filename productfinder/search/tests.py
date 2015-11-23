@@ -133,7 +133,7 @@ class SearchViewTest(TestCase):
                 "Leather Platform Ankle Boots")
             self.assertContains(
                 response,
-                "Football Boots Cake - Redsssssss")
+                "Football Boots Cake - Red")
 
     @patch.object(views, 'get_products')
     def test_search_view_return_none_products(self, get_products):
